@@ -2,6 +2,7 @@
   <dictionary name="Andre">
     <words>
       <w>lstm</w>
+      <w>saliancy</w>
     </words>
   </dictionary>
 </component>
