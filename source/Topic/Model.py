@@ -5,7 +5,12 @@ import gensim
 import numpy as np
 from source.Topic.Autoencoder import *
 from source.Topic.Preprocessing import *
+from source.Topic.Utils import *
 from datetime import datetime
+
+
+tokenizer = AutoTokenizer.from_pretrained("dbmdz/bert-base-german-cased")
+model = AutoModel.from_pretrained("dbmdz/bert-base-german-cased")
 
 
 def preprocess(docs, samp_size=None):
@@ -24,7 +29,7 @@ def preprocess(docs, samp_size=None):
     samp = np.random.choice(n_docs, samp_size)
     for i, idx in enumerate(samp):
         sentence = preprocess_sent(docs[idx])
-        token_list = preprocess_word(sentence)
+        token_list = preprocess_word2(sentence)
         if token_list:
             idx_in.append(idx)
             sentences.append(sentence)
@@ -102,12 +107,15 @@ class Topic_Model:
         elif method == 'BERT':
 
             print('Getting vector representations for BERT ...')
-            from sentence_transformers import SentenceTransformer
-            model = SentenceTransformer('bert-base-nli-max-tokens')
-            vec = np.array(model.encode(sentences, show_progress_bar=True))
+            #from sentence_transformers import SentenceTransformer
+            #model = SentenceTransformer('bert-base-nli-max-tokens')
+            #vec = np.array(model.encode(sentences, show_progress_bar=True))
+            batch_vec = []
+            for batch, (batch_start, batch_size) in enumerate(batch_iterator(len(sentences), 10)):
+                output, pooled = model(**tokenizer(sentences[batch_start: batch_start + batch_size], padding=True, truncation=True, return_tensors="pt"))
+                batch_vec.append(pooled.detach().numpy())
             print('Getting vector representations for BERT. Done!')
-            return vec
-
+            return np.vstack(batch_vec)
 
         elif method == 'LDA_BERT':
             # else:

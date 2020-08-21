@@ -117,3 +117,17 @@ def get_wordcloud(model, token_lists, topic):
         os.makedirs(dr)
     plt.savefig('/kaggle/working' + '/Topic' + str(topic) + '_wordcloud')
     print('Getting wordcloud for topic {}. Done!'.format(topic))
+
+
+def batch_generator(stop, desired_batch_size=100):
+    div = int(stop / desired_batch_size)
+    rest = stop % desired_batch_size
+    for i in range(div):
+        yield desired_batch_size
+    if rest != 0:
+        yield rest
+
+
+def batch_iterator(stop, desired_batch_size=100):
+    return [(batch * desired_batch_size, batch_size) for batch, batch_size
+            in enumerate(batch_generator(stop, desired_batch_size))]

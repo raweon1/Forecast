@@ -2,6 +2,7 @@ from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 from nltk.stem.cistem import Cistem
 from HanTa import HanoverTagger as ht
+from transformers import AutoModel, AutoTokenizer
 import re
 import nltk
 from nltk.tokenize import word_tokenize
@@ -192,4 +193,14 @@ def preprocess_word(s):
     w_list = f_stem(w_list, lang="german")
     w_list = f_stopw(w_list)
 
+    return w_list
+
+
+def preprocess_word2(s):
+    if not s:
+        return None
+    w_list = word_tokenize(s, language='german')
+    w_list = f_punct(w_list)
+    w_list = f_stem(w_list, lang="german")
+    w_list = f_stopw(w_list)
     return w_list
