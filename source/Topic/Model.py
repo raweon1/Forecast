@@ -26,10 +26,10 @@ def preprocess(docs, samp_size=None):
     token_lists = []  # word level preprocessed
     idx_in = []  # index of sample selected
     #     samp = list(range(100))
-    samp = np.random.choice(n_docs, samp_size)
+    samp = np.random.choice(n_docs, samp_size, replace=False)
     for i, idx in enumerate(samp):
         sentence = preprocess_sent(docs[idx])
-        token_list = preprocess_word2(sentence)
+        token_list = preprocess_word(sentence)
         if token_list:
             idx_in.append(idx)
             sentences.append(sentence)
